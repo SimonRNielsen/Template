@@ -23,7 +23,7 @@ namespace Template
 
         private static ContentManager AddContent;
         private static List<GameObject> gameObjects = new List<GameObject>();
-        public static List<GameObject> newGameObjects = new List<GameObject>();
+        private static List<GameObject> newGameObjects = new List<GameObject>();
         public static Dictionary<Enum, Texture2D> sprites = new Dictionary<Enum, Texture2D>();
         public static Dictionary<Enum, Texture2D[]> animations = new Dictionary<Enum, Texture2D[]>();
         public static Dictionary<Enum, SoundEffect> soundEffects = new Dictionary<Enum, SoundEffect>();
@@ -89,7 +89,7 @@ namespace Template
                 }
 
             gameObjects.RemoveAll(obj => obj.IsAlive == false);
-            newGameObjects.AddRange(gameObjects);
+            gameObjects.AddRange(newGameObjects);
             newGameObjects.Clear();
 
             base.Update(gameTime);
