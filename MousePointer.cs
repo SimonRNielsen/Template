@@ -20,9 +20,16 @@ namespace Template
         private bool ranRightClick = false;                                 //Blocks more than one run of event
         private Thread inputThread;                                         //Thread for running mouse input non-stop
         private LogicItems type;                                            //Enum for defining object
+        
+        /// <summary>
+        /// Left click eventhandler
+        /// </summary>
+        public Action LeftClickEventHandler;
 
-        public Action LeftClickEventHandler;                                //Left click eventhandler
-        public Action RightClickEventHandler;                               //Right click eventhandler
+        /// <summary>
+        /// Right click eventhandler
+        /// </summary>
+        public Action RightClickEventHandler;
         #endregion
         #region Properties
 
