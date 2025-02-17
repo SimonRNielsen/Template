@@ -154,7 +154,8 @@ namespace Template
             try
             {
                 sprites = GameWorld.animations[Type];
-                sprite = sprites[0];
+                if (sprites != null)
+                    sprite = sprites[0];
             }
             catch { }
         }
