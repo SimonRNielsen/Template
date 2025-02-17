@@ -53,7 +53,7 @@ namespace Template
                     LeftClickEventHandler?.Invoke();
                     ranLeftClick = true;
                 }
-                else
+                else if (!leftClick)
                     ranLeftClick = false;
             }
         }
@@ -72,7 +72,7 @@ namespace Template
                     RightClickEventHandler?.Invoke();
                     ranRightClick = true;
                 }
-                else
+                else if (!rightClick)
                     ranRightClick = false;
             }
 
