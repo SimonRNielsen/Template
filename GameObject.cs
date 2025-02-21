@@ -9,7 +9,7 @@ namespace Template
     {
         #region Fields
 
-        private object animationLock = new object();
+        private readonly object animationLock = new object();
         protected T type;
         protected Texture2D sprite;
         protected Texture2D[] sprites;

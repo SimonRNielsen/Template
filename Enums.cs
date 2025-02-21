@@ -6,8 +6,11 @@
     /// </summary>
     public enum LogicItems
     {
+
         MousePointer,
-        CollisionPixel
+        CollisionPixel,
+        SelectionBox
+
     }
 
 

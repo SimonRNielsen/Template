@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Threading;
 using System.Collections.Generic;
 using System;
+using SharpDX.Direct3D9;
 
 namespace Template
 {
@@ -19,7 +20,7 @@ namespace Template
         private Vector2 firstPos;
         private Vector2 secondPos;
         private Vector2 position;
-        private bool draging;
+        private bool dragging;
         private bool enableDragSelection = false;
         private bool leftClick;
         private bool rightClick;
@@ -35,6 +36,7 @@ namespace Template
         /// Right click eventhandler
         /// </summary>
         public Action RightClickEventHandler;
+
         #endregion
         #region Properties
 
@@ -51,7 +53,13 @@ namespace Template
         /// </summary>
         public Rectangle DragBox
         {
-            get { return new Rectangle((int)firstPos.X, (int)firstPos.Y, (int)(secondPos.X - firstPos.X), (int)(secondPos.Y - firstPos.Y)); }
+            get
+            {
+                if (dragging)
+                    return new Rectangle((int)firstPos.X, (int)firstPos.Y, (int)(secondPos.X - firstPos.X), (int)(secondPos.Y - firstPos.Y));
+                else
+                    return new Rectangle((int)firstPos.X, (int)firstPos.Y, (int)(position.X - firstPos.X), (int)(position.Y - firstPos.Y));
+            }
         }
 
         /// <summary>
@@ -72,12 +80,14 @@ namespace Template
                 {
                     LeftClickEventHandler?.Invoke();
                     ranLeftClick = true;
-                    firstPos = position;
+                    if (enableDragSelection)
+                        firstPos = position;
                 }
                 else if (!leftClick && ranLeftClick)
                 {
                     ranLeftClick = false;
-                    secondPos = position;
+                    if (enableDragSelection)
+                        secondPos = position;
                 }
             }
         }
@@ -153,13 +163,13 @@ namespace Template
         /// </summary>
         /// <param name="type">Enum to define mouse and set sprite</param>
         /// <param name="list">Reference list</param>
-        /// <param name="drag">Enable drag-selection if true</param>
-        public MousePointer(T type, ref List<GameObject<T>> list, bool drag)
+        /// <param name="enableDragBox">Enable drag-selection if true</param>
+        public MousePointer(T type, ref List<GameObject<T>> list, bool enableDragBox)
         {
 
             this.type = type;
             gameObjects = list;
-            enableDragSelection = drag;
+            enableDragSelection = enableDragBox;
             try
             {
                 sprite = GameWorld.sprites[type as Enum];
@@ -185,9 +195,14 @@ namespace Template
 
             if (sprite != null)
                 spriteBatch.Draw(sprite, position, null, Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 1f);
-            if (GameWorld.DebugMode && GameWorld.sprites.ContainsKey(LogicItems.CollisionPixel))
+            if (dragging && GameWorld.sprites.ContainsKey(LogicItems.CollisionPixel))
                 DrawCollisionBox(spriteBatch);
-
+            if (tempObjects.Count > 0 && GameWorld.sprites.ContainsKey(LogicItems.SelectionBox))
+                foreach (GameObject<T> obj in tempObjects)
+                {
+                    float selectionBoxScale = SetSelectionBoxSize(obj);
+                    spriteBatch.Draw(GameWorld.sprites[LogicItems.SelectionBox], obj.Position, null, Color.White, 0f, new Vector2((obj.Sprite.Width / 2 / selectionBoxScale) + 5, (obj.Sprite.Height / 2 / selectionBoxScale) + 5), selectionBoxScale, SpriteEffects.None, obj.Layer + 0.00001f);
+                }
         }
 
         /// <summary>
@@ -222,7 +237,7 @@ namespace Template
                 position = mouseState.Position.ToVector2();
                 LeftClick = mouseState.LeftButton == ButtonState.Pressed;
                 RightClick = mouseState.RightButton == ButtonState.Pressed;
-                //Update();
+                Update();
             }
 
         }
@@ -254,7 +269,7 @@ namespace Template
         }
 
 
-        private void DragBoxSelection()
+        public void DragBoxSelection()
         {
 
             tempObjects.Clear();
@@ -262,7 +277,7 @@ namespace Template
             lock (GameWorld.syncGameObjects)
             {
                 foreach (GameObject<T> entry in gameObjects)
-                    if (CheckCollision(DragBox, entry.CollisionBox))
+                    if (entry is ISelectable<T> && CheckCollision(DragBox, entry.CollisionBox))
                     {
                         tempObjects.Add(entry);
                     }
@@ -276,17 +291,17 @@ namespace Template
 
             if (enableDragSelection)
             {
+                if (firstPos != Vector2.Zero)
+                    dragging = true;
+                else
+                    dragging = false;
+
                 if (secondPos != Vector2.Zero)
                 {
                     DragBoxSelection();
                     firstPos = Vector2.Zero;
                     secondPos = Vector2.Zero;
                 }
-
-                if (firstPos != Vector2.Zero)
-                    draging = true;
-                else
-                    draging = false;
             }
 
         }
@@ -310,6 +325,18 @@ namespace Template
             spriteBatch.Draw(GameWorld.sprites[LogicItems.CollisionPixel], bottomLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
             spriteBatch.Draw(GameWorld.sprites[LogicItems.CollisionPixel], rightLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
             spriteBatch.Draw(GameWorld.sprites[LogicItems.CollisionPixel], leftLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
+
+        }
+
+        /// <summary>
+        /// Sets the size and layer of the selection box
+        /// </summary>
+        private float SetSelectionBoxSize(GameObject<T> obj)
+        {
+
+            float selectionBoxScale = Math.Max(obj.Sprite.Width / (float)GameWorld.sprites[LogicItems.SelectionBox].Width, obj.Sprite.Height / (float)GameWorld.sprites[LogicItems.SelectionBox].Height);
+            
+            return selectionBoxScale;
 
         }
 

@@ -18,7 +18,7 @@ namespace Template
         private static bool gameRunning = true;
         private static bool debugMode = false;
 
-        #region Lists, assets and objects
+        #region Collections, Assets, Objects & Eventhandlers
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -32,7 +32,7 @@ namespace Template
         public static Dictionary<Enum, SoundEffect> soundEffects = new Dictionary<Enum, SoundEffect>();
         public static Dictionary<Enum, Song> music = new Dictionary<Enum, Song>();
         public static SpriteFont gameFont;
-        public static object syncGameObjects = new object();
+        public static readonly object syncGameObjects = new object();
 
         #endregion
         #endregion
@@ -73,7 +73,7 @@ namespace Template
 
             //Instantiates mousePointer and makes "Content" static
             AddContent = Content;
-            mousePointer = new MousePointer<Enum>(LogicItems.MousePointer, ref gameObjects);
+            mousePointer = new MousePointer<Enum>(LogicItems.MousePointer, ref gameObjects, false);
 
             keyboard.CloseGame += ExitGame;
 
