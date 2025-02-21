@@ -4,8 +4,6 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
-using SharpDX.Direct3D9;
-using System.Reflection.Metadata;
 
 namespace Template
 {

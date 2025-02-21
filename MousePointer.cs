@@ -7,19 +7,22 @@ using System;
 
 namespace Template
 {
-    internal class MousePointer
+    internal class MousePointer<T>
     {
         #region Fields
 
-        private Texture2D sprite;                                           //Custom mouse cursor texture
-        private List<GameObject> tempObjects = new List<GameObject>();      //For handling more than one item at a time
+        private Texture2D sprite;                                              //Custom mouse cursor texture
+        private List<GameObject<T>> tempObjects = new List<GameObject<T>>();   //For handling more than one item at a time
+        private List<GameObject<T>> gameObjects;
         private Vector2 position;
         private bool leftClick;
         private bool rightClick;
-        private bool ranLeftClick = false;                                  //Blocks more than one run of event
-        private bool ranRightClick = false;                                 //Blocks more than one run of event
-        private Thread inputThread;                                         //Thread for running mouse input non-stop
-        private LogicItems type;                                            //Enum for defining object
+        private bool ranLeftClick = false;                                     //Blocks more than one run of event
+        private bool ranRightClick = false;                                    //Blocks more than one run of event
+        private Thread inputThread;                                            //Thread for running mouse input non-stop
+        private T type;                                                        //Generic for defining object
+        private Vector2 firstPos;
+        private Vector2 secondPos;
         
         /// <summary>
         /// Left click eventhandler
@@ -39,6 +42,12 @@ namespace Template
         public Rectangle CollisionBox
         {
             get { return new Rectangle((int)position.X, (int)position.Y, 1, 1); }
+        }
+
+
+        public Rectangle DragBox
+        {
+            get { return new Rectangle((int)firstPos.X, (int)firstPos.Y, (int)(firstPos.X - secondPos.X), (int)(firstPos.Y - secondPos.Y)); }
         }
 
         /// <summary>
@@ -92,20 +101,21 @@ namespace Template
         /// Creates an instance for custom mouse handling
         /// </summary>
         /// <param name="type">Enum to define mouse and set sprite</param>
-        public MousePointer(LogicItems type)
+        public MousePointer(T type, ref List<GameObject<T>> list)
         {
 
             this.type = type;
+            gameObjects = list;
             try
             {
-                sprite = GameWorld.sprites[type];
+                sprite = GameWorld.sprites[type as Enum];
             }
             catch { }
             inputThread = new Thread(HandleInput);
             inputThread.IsBackground = true;
             inputThread.Start();
-            LeftClickEventHandler += LeftClickEvent;
-            RightClickEventHandler += RightClickEvent;
+            LeftClickEventHandler += LeftClickAction;
+            RightClickEventHandler += RightClickAction;
 
         }
 
@@ -125,7 +135,7 @@ namespace Template
         /// <summary>
         /// Method to run when left mouse is clicked
         /// </summary>
-        private void LeftClickEvent()
+        private void LeftClickAction()
         {
 
 
@@ -135,7 +145,7 @@ namespace Template
         /// <summary>
         /// Method to run when right mouse is clicked
         /// </summary>
-        private void RightClickEvent()
+        private void RightClickAction()
         {
             
 
@@ -154,6 +164,49 @@ namespace Template
                 position = mouseState.Position.ToVector2();
                 LeftClick = mouseState.LeftButton == ButtonState.Pressed;
                 RightClick = mouseState.RightButton == ButtonState.Pressed;
+            }
+
+        }
+
+        /// <summary>
+        /// Checks if mouse is on top of GameObject
+        /// </summary>
+        /// <param name="other">GameObject to be checked with</param>
+        /// <returns>true if yes</returns>
+        private bool CheckCollision(Rectangle collisionBox, Rectangle other)
+        {
+
+            if (collisionBox.Intersects(other))
+                return true;
+            else
+                return false;
+
+        }
+
+        /// <summary>
+        /// Method to interact with "collided" object
+        /// </summary>
+        /// <param name="other">GameObject to manipulate</param>
+        private void OnCollision(GameObject<Enum> other)
+        {
+
+
+
+        }
+
+
+        private void DragBoxSelection()
+        {
+
+            tempObjects.Clear();
+
+            lock (GameWorld.syncGameObjects)
+            {
+                foreach (GameObject<T> entry in gameObjects)
+                    if (CheckCollision(DragBox, entry.CollisionBox))
+                    {
+                        tempObjects.Add(entry);
+                    }
             }
 
         }

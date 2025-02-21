@@ -5,12 +5,12 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Template
 {
-    public abstract class GameObject
+    public abstract class GameObject<T>
     {
         #region Fields
 
         private object animationLock = new object();
-        protected Enum type;
+        protected T type;
         protected Texture2D sprite;
         protected Texture2D[] sprites;
         protected Color color = Color.White;
@@ -111,7 +111,7 @@ namespace Template
         /// <summary>
         /// Property for getting/setting the Enum designating what the object identifies as
         /// </summary>
-        public virtual Enum Type { get => type; protected set => type = value; }
+        public virtual T Type { get => type; protected set => type = value; }
 
         /// <summary>
         /// Property for getting/setting position of the object
@@ -142,18 +142,18 @@ namespace Template
         /// </summary>
         /// <param name="type">Enum that defines the object</param>
         /// <param name="spawnPos">Starting position of the object</param>
-        public GameObject(Enum type, Vector2 spawnPos)
+        public GameObject(T type, Vector2 spawnPos)
         {
             Type = type;
             position = spawnPos;
             try
             {
-                sprite = GameWorld.sprites[Type];
+                sprite = GameWorld.sprites[(Type as Enum)];
             }
             catch { }
             try
             {
-                sprites = GameWorld.animations[Type];
+                sprites = GameWorld.animations[(Type as Enum)];
                 if (sprites != null)
                     sprite = sprites[0];
             }

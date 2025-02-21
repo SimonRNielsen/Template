@@ -8,5 +8,17 @@
     {
         MousePointer
     }
+
+
+    public enum SoundEffects
+    {
+
+    }
+
+
+    public enum Music
+    {
+
+    }
         
 }

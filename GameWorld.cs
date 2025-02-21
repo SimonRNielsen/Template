@@ -22,9 +22,9 @@ namespace Template
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private static ContentManager AddContent;
-        internal static MousePointer mousePointer;
-        private static List<GameObject> gameObjects = new List<GameObject>();
-        private static List<GameObject> newGameObjects = new List<GameObject>();
+        internal static MousePointer<Enum> mousePointer;
+        private static List<GameObject<Enum>> gameObjects = new List<GameObject<Enum>>();
+        private static List<GameObject<Enum>> newGameObjects = new List<GameObject<Enum>>();
         public static Dictionary<Enum, Texture2D> sprites = new Dictionary<Enum, Texture2D>();
         public static Dictionary<Enum, Texture2D[]> animations = new Dictionary<Enum, Texture2D[]>();
         public static Dictionary<Enum, SoundEffect> soundEffects = new Dictionary<Enum, SoundEffect>();
@@ -39,6 +39,7 @@ namespace Template
         public static bool GameRunning { get => gameRunning; }
 
         #endregion
+        #region Constructor
 
         public GameWorld()
         {
@@ -49,6 +50,8 @@ namespace Template
 
         }
 
+        #endregion
+        #region Methods
 
         protected override void Initialize()
         {
@@ -60,7 +63,7 @@ namespace Template
 
             //Instantiates mousePointer and makes "Content" static
             AddContent = Content;
-            mousePointer = new MousePointer(LogicItems.MousePointer);
+            mousePointer = new MousePointer<Enum>(LogicItems.MousePointer, ref gameObjects);
 
             base.Initialize();
 
@@ -91,7 +94,7 @@ namespace Template
 
             //Update loop (if any objects present)
             if (gameObjects.Count > 0)
-                foreach (GameObject gameObject in gameObjects)
+                foreach (GameObject<Enum> gameObject in gameObjects)
                 {
                     gameObject.Update(gameTime);
                 }
@@ -125,7 +128,7 @@ namespace Template
             {
                 //Iterates list only if any objects present
                 if (gameObjects.Count > 0)
-                    foreach (GameObject gameObject in gameObjects)
+                    foreach (GameObject<Enum> gameObject in gameObjects)
                     {
                         gameObject.Draw(_spriteBatch);
                     }
@@ -141,27 +144,27 @@ namespace Template
         /// Method to add one or more objects and run its "LoadContent" method
         /// </summary>
         /// <param name="obj">Either single object, list or array</param>
-        public static void AddObject(GameObject obj)
+        public static void AddObject(GameObject<Enum> obj)
         {
 
             obj.LoadContent(AddContent);
             newGameObjects.Add(obj);
 
         }
-        public static void AddObject(GameObject[] objs)
+        public static void AddObject(GameObject<Enum>[] objs)
         {
 
-            foreach (GameObject obj in objs)
+            foreach (GameObject<Enum> obj in objs)
             {
                 obj.LoadContent(AddContent);
                 newGameObjects.Add(obj);
             }
 
         }
-        public static void AddObject(List<GameObject> objs)
+        public static void AddObject(List<GameObject<Enum>> objs)
         {
 
-            foreach (GameObject obj in objs)
+            foreach (GameObject<Enum> obj in objs)
             {
                 obj.LoadContent(AddContent);
                 newGameObjects.Add(obj);
@@ -169,5 +172,6 @@ namespace Template
 
         }
 
+        #endregion
     }
 }
