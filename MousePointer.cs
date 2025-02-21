@@ -46,7 +46,9 @@ namespace Template
             get { return new Rectangle((int)position.X, (int)position.Y, 1, 1); }
         }
 
-
+        /// <summary>
+        /// Drag box for selecting multiple objects
+        /// </summary>
         public Rectangle DragBox
         {
             get { return new Rectangle((int)firstPos.X, (int)firstPos.Y, (int)(secondPos.X - firstPos.X), (int)(secondPos.Y - firstPos.Y)); }
