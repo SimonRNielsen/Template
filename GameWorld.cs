@@ -16,6 +16,7 @@ namespace Template
         #region Fields
 
         private static bool gameRunning = true;
+        private static bool debugMode = false;
 
         #region Lists, assets and objects
 
@@ -23,6 +24,7 @@ namespace Template
         private SpriteBatch _spriteBatch;
         private static ContentManager AddContent;
         internal static MousePointer<Enum> mousePointer;
+        internal static KeyboardInput keyboard = new KeyboardInput();
         private static List<GameObject<Enum>> gameObjects = new List<GameObject<Enum>>();
         private static List<GameObject<Enum>> newGameObjects = new List<GameObject<Enum>>();
         public static Dictionary<Enum, Texture2D> sprites = new Dictionary<Enum, Texture2D>();
@@ -36,7 +38,15 @@ namespace Template
         #endregion
         #region Properties
 
+        /// <summary>
+        /// Handles secure closing of seperate threads
+        /// </summary>
         public static bool GameRunning { get => gameRunning; }
+
+        /// <summary>
+        /// Enables/Disables collision-textures
+        /// </summary>
+        public static bool DebugMode { get => debugMode; set => debugMode = value; }
 
         #endregion
         #region Constructor
@@ -65,6 +75,8 @@ namespace Template
             AddContent = Content;
             mousePointer = new MousePointer<Enum>(LogicItems.MousePointer, ref gameObjects);
 
+            keyboard.CloseGame += ExitGame;
+
             base.Initialize();
 
         }
@@ -82,15 +94,7 @@ namespace Template
         protected override void Update(GameTime gameTime)
         {
             //Registers keyboard input
-            var keyboardInput = Keyboard.GetState();
-
-            //Closes threads connected to "GameRunning" property
-            if (keyboardInput.IsKeyDown(Keys.Escape) && gameRunning)
-            {
-                gameRunning = false;
-                Thread.Sleep(20);
-                Exit();
-            }
+            keyboard.HandleInput(gameTime);
 
             //Update loop (if any objects present)
             if (gameObjects.Count > 0)
@@ -171,6 +175,40 @@ namespace Template
             }
 
         }
+
+#if DEBUG
+
+        private void DrawCollisionBox<T>(GameObject<T> gameObject)
+        {
+
+            if (debugMode)
+            {
+
+                Color color = Color.Red;
+                Rectangle collisionBox = gameObject.CollisionBox;
+                Rectangle topLine = new Rectangle(collisionBox.X, collisionBox.Y, collisionBox.Width, 1);
+                Rectangle bottomLine = new Rectangle(collisionBox.X, collisionBox.Y + collisionBox.Height, collisionBox.Width, 1);
+                Rectangle rightLine = new Rectangle(collisionBox.X + collisionBox.Width, collisionBox.Y, 1, collisionBox.Height);
+                Rectangle leftLine = new Rectangle(collisionBox.X, collisionBox.Y, 1, collisionBox.Height);
+
+                _spriteBatch.Draw(sprites[LogicItems.CollisionPixel], topLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
+                _spriteBatch.Draw(sprites[LogicItems.CollisionPixel], bottomLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
+                _spriteBatch.Draw(sprites[LogicItems.CollisionPixel], rightLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
+                _spriteBatch.Draw(sprites[LogicItems.CollisionPixel], leftLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
+
+            }
+
+        }
+
+
+        private void ExitGame()
+        {
+            gameRunning = false;
+            Thread.Sleep(20);
+            Exit();
+        }
+
+#endif
 
         #endregion
     }

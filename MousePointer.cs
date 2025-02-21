@@ -11,19 +11,21 @@ namespace Template
     {
         #region Fields
 
-        private Texture2D sprite;                                              //Custom mouse cursor texture
-        private List<GameObject<T>> tempObjects = new List<GameObject<T>>();   //For handling more than one item at a time
-        private List<GameObject<T>> gameObjects;
-        private Vector2 position;
-        private bool leftClick;
-        private bool rightClick;
-        private bool ranLeftClick = false;                                     //Blocks more than one run of event
-        private bool ranRightClick = false;                                    //Blocks more than one run of event
-        private Thread inputThread;                                            //Thread for running mouse input non-stop
-        private T type;                                                        //Generic for defining object
+        private T type;                                                         //Generic for defining object
+        private Thread inputThread;                                             //Thread for running mouse input non-stop
+        private Texture2D sprite;                                               //Custom mouse cursor texture
+        private List<GameObject<T>> tempObjects = new List<GameObject<T>>();    //For handling more than one item at a time
+        private List<GameObject<T>> gameObjects;                                //Reference-list
         private Vector2 firstPos;
         private Vector2 secondPos;
-        
+        private Vector2 position;
+        private bool draging;
+        private bool enableDragSelection = false;
+        private bool leftClick;
+        private bool rightClick;
+        private bool ranLeftClick = false;                                      //Blocks more than one run of event
+        private bool ranRightClick = false;                                     //Blocks more than one run of event
+
         /// <summary>
         /// Left click eventhandler
         /// </summary>
@@ -144,6 +146,31 @@ namespace Template
 
         }
 
+        /// <summary>
+        /// Creates an instance for custom mouse handling
+        /// </summary>
+        /// <param name="type">Enum to define mouse and set sprite</param>
+        /// <param name="list">Reference list</param>
+        /// <param name="drag">Enable drag-selection if true</param>
+        public MousePointer(T type, ref List<GameObject<T>> list, bool drag)
+        {
+
+            this.type = type;
+            gameObjects = list;
+            enableDragSelection = drag;
+            try
+            {
+                sprite = GameWorld.sprites[type as Enum];
+            }
+            catch { }
+            inputThread = new Thread(HandleInput);
+            inputThread.IsBackground = true;
+            inputThread.Start();
+            LeftClickEventHandler += LeftClickAction;
+            RightClickEventHandler += RightClickAction;
+
+        }
+
         #endregion
         #region Methods
 
@@ -156,6 +183,8 @@ namespace Template
 
             if (sprite != null)
                 spriteBatch.Draw(sprite, position, null, Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 1f);
+            if (GameWorld.DebugMode && GameWorld.sprites.ContainsKey(LogicItems.CollisionPixel))
+                DrawCollisionBox(spriteBatch);
 
         }
 
@@ -166,7 +195,7 @@ namespace Template
         {
 
 
-            
+
         }
 
         /// <summary>
@@ -174,7 +203,7 @@ namespace Template
         /// </summary>
         private void RightClickAction()
         {
-            
+
 
 
         }
@@ -215,7 +244,7 @@ namespace Template
         /// Method to interact with "collided" object
         /// </summary>
         /// <param name="other">GameObject to manipulate</param>
-        private void OnCollision(GameObject<Enum> other)
+        private void OnCollision(GameObject<T> other)
         {
 
 
@@ -243,12 +272,42 @@ namespace Template
         private void Update()
         {
 
-            if (secondPos != Vector2.Zero)
+            if (enableDragSelection)
             {
-                DragBoxSelection();
-                firstPos = Vector2.Zero;
-                secondPos = Vector2.Zero;
+                if (secondPos != Vector2.Zero)
+                {
+                    DragBoxSelection();
+                    firstPos = Vector2.Zero;
+                    secondPos = Vector2.Zero;
+                }
+
+                if (firstPos != Vector2.Zero)
+                    draging = true;
+                else
+                    draging = false;
             }
+
+        }
+
+        /// <summary>
+        /// Draws drag-selection
+        /// </summary>
+        /// <param name="spriteBatch">GameWorld logic</param>
+        private void DrawCollisionBox(SpriteBatch spriteBatch)
+        {
+
+            Color color = Color.Green;
+            Rectangle collisionBox = DragBox;
+            Rectangle topLine = new Rectangle(collisionBox.X, collisionBox.Y, collisionBox.Width, 1);
+            Rectangle bottomLine = new Rectangle(collisionBox.X, collisionBox.Y + collisionBox.Height, collisionBox.Width, 1);
+            Rectangle rightLine = new Rectangle(collisionBox.X + collisionBox.Width, collisionBox.Y, 1, collisionBox.Height);
+            Rectangle leftLine = new Rectangle(collisionBox.X, collisionBox.Y, 1, collisionBox.Height);
+
+
+            spriteBatch.Draw(GameWorld.sprites[LogicItems.CollisionPixel], topLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(GameWorld.sprites[LogicItems.CollisionPixel], bottomLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(GameWorld.sprites[LogicItems.CollisionPixel], rightLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
+            spriteBatch.Draw(GameWorld.sprites[LogicItems.CollisionPixel], leftLine, null, color, 0, Vector2.Zero, SpriteEffects.None, 1f);
 
         }
 

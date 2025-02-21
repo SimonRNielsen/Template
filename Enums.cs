@@ -6,7 +6,8 @@
     /// </summary>
     public enum LogicItems
     {
-        MousePointer
+        MousePointer,
+        CollisionPixel
     }
 
 
