@@ -47,7 +47,7 @@ namespace Template
 
         public Rectangle DragBox
         {
-            get { return new Rectangle((int)firstPos.X, (int)firstPos.Y, (int)(firstPos.X - secondPos.X), (int)(firstPos.Y - secondPos.Y)); }
+            get { return new Rectangle((int)firstPos.X, (int)firstPos.Y, (int)(secondPos.X - firstPos.X), (int)(secondPos.Y - firstPos.Y)); }
         }
 
         /// <summary>
@@ -68,9 +68,13 @@ namespace Template
                 {
                     LeftClickEventHandler?.Invoke();
                     ranLeftClick = true;
+                    firstPos = position;
                 }
                 else if (!leftClick && ranLeftClick)
+                {
                     ranLeftClick = false;
+                    secondPos = position;
+                }
             }
         }
 
@@ -91,7 +95,6 @@ namespace Template
                 else if (!rightClick && ranRightClick)
                     ranRightClick = false;
             }
-
         }
 
         #endregion
@@ -101,6 +104,28 @@ namespace Template
         /// Creates an instance for custom mouse handling
         /// </summary>
         /// <param name="type">Enum to define mouse and set sprite</param>
+        public MousePointer(T type)
+        {
+
+            this.type = type;
+            try
+            {
+                sprite = GameWorld.sprites[type as Enum];
+            }
+            catch { }
+            inputThread = new Thread(HandleInput);
+            inputThread.IsBackground = true;
+            inputThread.Start();
+            LeftClickEventHandler += LeftClickAction;
+            RightClickEventHandler += RightClickAction;
+
+        }
+
+        /// <summary>
+        /// Creates an instance for custom mouse handling
+        /// </summary>
+        /// <param name="type">Enum to define mouse and set sprite</param>
+        /// <param name="list">Reference list</param>
         public MousePointer(T type, ref List<GameObject<T>> list)
         {
 
@@ -128,8 +153,10 @@ namespace Template
         /// <param name="spriteBatch">GameWorld logic</param>
         public void Draw(SpriteBatch spriteBatch)
         {
+
             if (sprite != null)
                 spriteBatch.Draw(sprite, position, null, Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 1f);
+
         }
 
         /// <summary>
@@ -164,6 +191,7 @@ namespace Template
                 position = mouseState.Position.ToVector2();
                 LeftClick = mouseState.LeftButton == ButtonState.Pressed;
                 RightClick = mouseState.RightButton == ButtonState.Pressed;
+                //Update();
             }
 
         }
@@ -207,6 +235,19 @@ namespace Template
                     {
                         tempObjects.Add(entry);
                     }
+            }
+
+        }
+
+
+        private void Update()
+        {
+
+            if (secondPos != Vector2.Zero)
+            {
+                DragBoxSelection();
+                firstPos = Vector2.Zero;
+                secondPos = Vector2.Zero;
             }
 
         }

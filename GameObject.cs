@@ -144,6 +144,7 @@ namespace Template
         /// <param name="spawnPos">Starting position of the object</param>
         public GameObject(T type, Vector2 spawnPos)
         {
+
             Type = type;
             position = spawnPos;
             try
@@ -158,6 +159,7 @@ namespace Template
                     sprite = sprites[0];
             }
             catch { }
+
         }
 
         #endregion
@@ -175,8 +177,10 @@ namespace Template
         /// <param name="gameTime">GameWorld logic</param>
         public virtual void Update(GameTime gameTime)
         {
+
             if (sprites != null)
                 Animate(gameTime);
+
         }
 
         /// <summary>
@@ -206,8 +210,10 @@ namespace Template
         /// <param name="spriteBatch">GameWorld logic</param>
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+
             if (sprite != null)
                 spriteBatch.Draw(sprite, position, null, color, rotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale, spriteEffects[spriteEffectIndex], layer);
+        
         }
 
         #endregion
