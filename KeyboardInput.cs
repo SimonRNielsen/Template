@@ -35,7 +35,7 @@ namespace Template
         public void HandleInput(GameTime gameTime)
         {
 
-            var input = Keyboard.GetState();
+            KeyboardState input = Keyboard.GetState();
 
             if (input.IsKeyDown(Keys.Escape))
                 CloseGame?.Invoke();
