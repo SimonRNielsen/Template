@@ -70,6 +70,7 @@ namespace Template
             _graphics.PreferredBackBufferWidth = 1920;
             _graphics.PreferredBackBufferHeight = 1080;
             _graphics.ApplyChanges();
+            base.Initialize();
 
             //Instantiates mousePointer and makes "Content" static
             AddContent = Content;
@@ -77,7 +78,6 @@ namespace Template
 
             keyboard.CloseGame += ExitGame;
 
-            base.Initialize();
 
         }
 
@@ -200,6 +200,7 @@ namespace Template
 
         }
 
+#endif
 
         private void ExitGame()
         {
@@ -208,7 +209,6 @@ namespace Template
             Exit();
         }
 
-#endif
 
         #endregion
     }

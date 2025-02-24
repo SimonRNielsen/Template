@@ -233,7 +233,7 @@ namespace Template
 
             while (GameWorld.GameRunning)
             {
-                var mouseState = Mouse.GetState();
+                MouseState mouseState = Mouse.GetState();
                 position = mouseState.Position.ToVector2();
                 LeftClick = mouseState.LeftButton == ButtonState.Pressed;
                 RightClick = mouseState.RightButton == ButtonState.Pressed;
