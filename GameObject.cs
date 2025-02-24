@@ -154,7 +154,7 @@ namespace Template
             else if (GameWorld.sprites.ContainsKey(Type as Enum))
                 sprite = GameWorld.sprites[(Type as Enum)];
             if (sprite != null)
-                position = new Vector2(spawnPos.X + sprite.Width / 2, spawnPos.Y + sprite.Width / 2);
+                position = new Vector2(spawnPos.X + sprite.Width / 2, spawnPos.Y + sprite.Height / 2);
             else
                 position = spawnPos;
 
