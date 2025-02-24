@@ -200,6 +200,7 @@ namespace Template
 
         }
 
+#endif
 
         private void ExitGame()
         {
@@ -208,7 +209,6 @@ namespace Template
             Exit();
         }
 
-#endif
 
         #endregion
     }
