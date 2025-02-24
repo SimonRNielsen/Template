@@ -57,12 +57,12 @@ namespace Template
             _graphics.PreferredBackBufferWidth = 1920;
             _graphics.PreferredBackBufferHeight = 1080;
             _graphics.ApplyChanges();
+            base.Initialize();
 
             //Instantiates mousePointer and makes "Content" static
             AddContent = Content;
             mousePointer = new MousePointer(LogicItems.MousePointer);
 
-            base.Initialize();
 
         }
 
