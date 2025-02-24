@@ -146,19 +146,17 @@ namespace Template
         {
 
             Type = type;
-            position = spawnPos;
-            try
-            {
-                sprite = GameWorld.sprites[(Type as Enum)];
-            }
-            catch { }
-            try
+            if (GameWorld.animations.ContainsKey(Type as Enum))
             {
                 sprites = GameWorld.animations[(Type as Enum)];
-                if (sprites != null)
-                    sprite = sprites[0];
+                sprite = sprites[0];
             }
-            catch { }
+            else if (GameWorld.sprites.ContainsKey(Type as Enum))
+                sprite = GameWorld.sprites[(Type as Enum)];
+            if (sprite != null)
+                position = new Vector2(spawnPos.X + sprite.Width / 2, spawnPos.Y + sprite.Width / 2);
+            else
+                position = spawnPos;
 
         }
 
@@ -213,7 +211,7 @@ namespace Template
 
             if (sprite != null)
                 spriteBatch.Draw(sprite, position, null, color, rotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale, spriteEffects[spriteEffectIndex], layer);
-        
+
         }
 
         #endregion
