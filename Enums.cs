@@ -24,5 +24,20 @@
     {
 
     }
-        
+
+    public enum TileTypes //Temporary import for pathfinding algorithms
+    {
+
+        TowerKey, 
+        TowerPortion,
+        Portal,
+        Key,
+        Forest,
+        Fence,
+        Path,
+        Grass,
+        FencePath,
+        Stone
+    }
+
 }
