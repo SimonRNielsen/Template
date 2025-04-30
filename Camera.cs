@@ -35,12 +35,12 @@ namespace Template
         /// <summary>
         /// Used to set the zoomlevel of the viewport (scaled float)
         /// </summary>
-        public float Zoom { get; set; }
+        public float Zoom { get; set; } = 1f;
 
         /// <summary>
         /// Used to rotate the camera
         /// </summary>
-        public float Rotation { get; set; }
+        public float Rotation { get; set; } = 0f;
 
         #endregion
         #region Constuctor
@@ -49,12 +49,11 @@ namespace Template
         /// Constructor for the camera viewport
         /// </summary>
         /// <param name="graphicsDevice">Defines which graphicsdevice to get viewport parameters from</param>
-        /// <param name="position">Defines starting position of the viewport</param>
         public Camera(GraphicsDevice graphicsDevice)
         {
+
             _graphicsDevice = graphicsDevice;
-            Zoom = 1f;
-            Rotation = 0.0f;
+
         }
 
         #endregion
@@ -78,24 +77,14 @@ namespace Template
         /// Reverts transformation to get position compared to viewport
         /// </summary>
         /// <returns>Inverted "GetTransformation" Matrix</returns>
-        public Matrix InverseTransformation()
-        {
-
-            return Matrix.Invert(GetTransformation());
-
-        }
+        public Matrix InverseTransformation() => Matrix.Invert(GetTransformation());
 
         /// <summary>
         /// Converts a position on the viewport (mouse position as example) into ingame position
         /// </summary>
         /// <param name="position">The Vector2 to be transformed</param>
         /// <returns>Useable relative position</returns>
-        public Vector2 RefactorPosition(Vector2 position)
-        {
-
-            return Vector2.Transform(position, InverseTransformation());
-
-        }
+        public Vector2 RefactorPosition(Vector2 position) => Vector2.Transform(position, InverseTransformation());
 
         #endregion
 
