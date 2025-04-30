@@ -39,9 +39,10 @@ namespace Template.Collisions
         public bool DoHybridCheck(Rectangle other)
         {
 
-            foreach (RectangleData rect in Rectangles)
-                if (rect.Rectangle.Intersects(other))
-                    return true;
+            if (Rectangles != null)
+                foreach (RectangleData rect in Rectangles)
+                    if (rect.Rectangle.Intersects(other))
+                        return true;
 
             return false;
 
