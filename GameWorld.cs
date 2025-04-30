@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Xml.Linq;
+using Template.Collisions;
 
 namespace Template
 {
