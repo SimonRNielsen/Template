@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace Template.Collisions
 {
@@ -6,6 +7,9 @@ namespace Template.Collisions
 
     public interface ICollidable
     {
+
+
+        public Enum Type { get; }
 
 
         public Rectangle CollisionBox { get; }
@@ -22,7 +26,7 @@ namespace Template.Collisions
         }
 
 
-        public void OnCollision();
+        public void OnCollision(ICollidable other);
 
 
     }
