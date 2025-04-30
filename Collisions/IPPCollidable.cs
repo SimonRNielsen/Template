@@ -10,7 +10,7 @@ namespace Template.Collisions
     {
 
 
-        public Vector2 CollisionPosition { get; }
+        public Vector2 ColliderPosition { get; }
 
 
         public List<RectangleData> Rectangles { get; set; }
@@ -28,7 +28,7 @@ namespace Template.Collisions
         }
 
 
-        public bool PPCollisionCheck(IPPCollidable other)
+        public bool PPCheckCollision(IPPCollidable other)
         {
 
             foreach (RectangleData rect1 in Rectangles)
@@ -41,10 +41,10 @@ namespace Template.Collisions
         }
 
 
-        public void UpdateRectangles(IPPCollidable collidable, int width, int height)
+        public void UpdateRectangles(int width, int height)
         {
             foreach (RectangleData rectangle in Rectangles)
-                rectangle.UpdatePosition(this, width, height);
+                rectangle.UpdatePosition(ColliderPosition, width, height);
         }
 
 
@@ -123,10 +123,10 @@ namespace Template.Collisions
         }
 
 
-        public void UpdatePosition(IPPCollidable collidable, int width, int height)
+        public void UpdatePosition(Vector2 position, int width, int height)
         {
 
-            Rectangle = new Rectangle((int)collidable.CollisionPosition.X + X - width / 2, (int)collidable.CollisionPosition.Y + Y - height / 2, 1, 1);
+            Rectangle = new Rectangle((int)position.X + X - width / 2, (int)position.Y + Y - height / 2, 1, 1);
 
         }
 
