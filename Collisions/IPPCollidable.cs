@@ -99,26 +99,20 @@ namespace Template.Collisions
     public class RectangleData
     {
 
-        private Rectangle rectangle;
-        private int x;
-        private int y;
+        public Rectangle Rectangle { get; set; } = new Rectangle();
 
 
-        public Rectangle Rectangle { get => rectangle; set => rectangle = value; }
+        public int X { get; set; } 
 
 
-        public int X { get => x; set => x = value; }
-
-
-        public int Y { get => y; set => y = value; }
+        public int Y { get; set; }
 
 
         public RectangleData(int x, int y)
         {
 
-            rectangle = new Rectangle();
-            this.x = x;
-            this.y = y;
+            X = x;
+            Y = y;
 
         }
 
