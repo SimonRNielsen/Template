@@ -81,7 +81,7 @@ namespace Template.Collisions
         }
 
         /// <summary>
-        /// Creates a List of Rectangles for collision checks (is automatically run on UpdateRectangles if Rectangles count is 0 or it's null
+        /// Creates a List of Rectangles for collision checks (is automatically run on UpdateRectangles if Rectangles count is 0 or it's null)
         /// </summary>
         /// <returns>List used to instantiate "Rectangles"</returns>
         /// <exception cref="Exception">Throws exception if no sprite was found</exception>
